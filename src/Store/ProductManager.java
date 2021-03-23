@@ -6,9 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ProductManager {
 
@@ -17,8 +15,9 @@ public class ProductManager {
     private DateTimeFormatter dateFormatter;
     private NumberFormat moneyFormatter;
 
-    private Review[] reviews = new Review[5];
-    private Product product;
+//    private Review[] reviews = new Review[5];
+//    private Product product;
+    private Map<Product, List<Review>> products = new HashMap<>();
 
     public ProductManager(Locale locale) {
         this.locale = locale;
@@ -28,39 +27,45 @@ public class ProductManager {
     }
 
     public Product createProduct(int id, String name, BigDecimal price, Rating rating, LocalDate bestBefore) {
-        product = new Food(id, name, price, rating, bestBefore);
+        Product product = new Food(id, name, price, rating, bestBefore);
+        products.putIfAbsent(product, new ArrayList<>());
 
         return  product;
+
     }
 
     public Product createProduct(int id, String name, BigDecimal price, Rating rating) {
-        product = new Drink(id, name, price, rating);
+        Product product = new Drink(id, name, price, rating);
+        products.putIfAbsent(product, new ArrayList<>());
 
         return product;
     }
     //Should return product because we are adding a review to the product...
     public Product reviewProduct(Product product, Rating rating, String comments) {
-//        reviews = new Review(rating, comments);
-        if(reviews[reviews.length - 1] != null) {//Now u can do more reviews for same product
-            reviews = Arrays.copyOf(reviews, reviews.length + 5);
-        }
-        int counter = 0;
+
         int sum = 0;
-        boolean reviewed = false;
-        while (counter < reviews.length && !reviewed) {
-            if(reviews[counter] == null) {
-                reviews[counter] = new Review(rating, comments);
-                reviewed = true;
-            }
-            sum += reviews[counter].getRating().ordinal();//
-            counter++;
+        //Get the list of reviews of a product
+        List<Review> reviews = products.get(product);
+        //Recreate the product getting rid of the old one and put the new one...
+        products.remove(product, reviews);
+
+        reviews.add(new Review(rating, comments));
+
+        for(Review review : reviews) {//Calc total sum of ratings
+
+            sum += review.getRating().ordinal();
         }
+
         //Calculate rating based on the Average of reviews.
-        this.product = product.applyRating(Rateable.convert(Math.round((float) sum / counter)));// rating
+        product = product.applyRating(Rateable.convert(Math.round((float) sum / reviews.size())));
+
+        products.put(product, reviews);
+
         return product;
     }
 
-    public void printProductReport() {
+    public void printProductReport(Product product) {
+        List<Review> reviews = products.get(product);
         StringBuilder txt = new StringBuilder();
         txt.append(MessageFormat.format(resources.getString("product"),
                                         product.getName(),
@@ -68,17 +73,15 @@ public class ProductManager {
                                         product.getRating().getStarts(),
                                         dateFormatter.format(product.getBestBefore())));
         txt.append("\n");
-        for(Review reviews : reviews) {
-
-            if (reviews == null)
-                break;
+        for(Review review : reviews) {
 
             txt.append(MessageFormat.format(resources.getString("review"),
-                    reviews.getRating().getStarts(),
-                    reviews.getComments()));
+                    review.getRating().getStarts(),
+                    review.getComments()));
             txt.append("\n");
         }
-        if(reviews[0] == null) {
+
+        if(reviews.isEmpty()) {
             txt.append(resources.getString("no.reviews"));
             txt.append("\n");
         }
