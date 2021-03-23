@@ -10,7 +10,7 @@ public class App {
 
     public static void main(String[] args) {
 
-        ProductManager pm = new ProductManager(Locale.US);
+        ProductManager pm = new ProductManager("en-US");
 
         pm.createProduct(1, "Tea", BigDecimal.valueOf(1.99), NOT_RATED);
         pm.reviewProduct(1, NOT_RATED, "IDK");
@@ -19,6 +19,8 @@ public class App {
         pm.reviewProduct(1, FOUR_STARTS, "Made me happy");
         pm.printProductReport(1);
 
+        pm.changeLocal("ru-RU");
+
         pm.createProduct(2, "Blue", BigDecimal.valueOf(90), NOT_RATED);
         pm.reviewProduct(2, NOT_RATED, "IDK");
         pm.reviewProduct(2, THREE_STARTS, "Good enough");
@@ -26,13 +28,15 @@ public class App {
         pm.reviewProduct(2, FOUR_STARTS, "Made me happy");
         pm.printProductReport(2);
 
+        pm.changeLocal("zh-CN");
+
         pm.createProduct(3, "Corn-flakes", BigDecimal.valueOf(12.34), NOT_RATED);
         pm.reviewProduct(3, NOT_RATED, "IDK");
         pm.reviewProduct(3, THREE_STARTS, "Good enough");
         pm.reviewProduct(3, FIVE_STARTS, "I love it!");
         pm.reviewProduct(3, FOUR_STARTS, "Made me happy");
         pm.printProductReport(3);
-
+        pm.changeLocal("es-ES");
         pm.createProduct(4, "Jabon", BigDecimal.valueOf(14.99), NOT_RATED);
         pm.reviewProduct(4, NOT_RATED, "IDK");
         pm.reviewProduct(4, THREE_STARTS, "Good enough");
