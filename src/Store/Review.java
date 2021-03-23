@@ -1,6 +1,6 @@
 package Store;
 
-public class Review {
+public class Review implements Comparable<Review> {
     private Rating rating;
     private String comments;
 
@@ -20,5 +20,12 @@ public class Review {
     @Override
     public String toString() {
         return "Rating: "+rating+", Comment: "+comments;
+    }
+
+    @Override
+    public int compareTo(Review other) {//To sort reviews to some order
+        return other.rating.ordinal() - this.rating.ordinal();
+        //0 is same
+        //- negative or + positive value
     }
 }

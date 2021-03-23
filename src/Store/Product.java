@@ -3,7 +3,6 @@ package Store;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.Objects;
 
 public abstract class Product implements Rateable<Product> {
     public static final BigDecimal DISCOUNT_RATE = BigDecimal.valueOf(0.1);
@@ -12,9 +11,6 @@ public abstract class Product implements Rateable<Product> {
     private BigDecimal price;
     private Rating rating;
 
-//    Product() {
-//        this(0, "n/a", BigDecimal.ZERO);
-//    }
     //Get ride off public keyword to make them accessible just by classes in same package.
     //Interfaces allows u to inherit code from more than 1 class.
     Product(int id, String name, BigDecimal price, Rating rating) {
@@ -71,7 +67,7 @@ public abstract class Product implements Rateable<Product> {
         }
         if(obj instanceof Product) {
             final  Product other = (Product) obj;
-            return this.id == other.id && Objects.equals(this.name, other.name);
+            return this.id == other.id;// && Objects.equals(this.name, other.name);
         }
         return false;
     }
