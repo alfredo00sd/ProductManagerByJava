@@ -91,6 +91,21 @@ public class ProductManager {
         return result;
     }
 
+    //Print more than one report in a particular order.
+    public void printProducts(Comparator<Product> sorter) {
+
+        //Get the keys of obj hashMap
+        List<Product> productList = new ArrayList<>(products.keySet());
+        productList.sort(sorter);
+        StringBuilder txt = new StringBuilder();
+
+        for (Product product : productList) {
+            txt.append(formatter.formatProduct(product));
+            txt.append("\n");
+        }
+        System.out.println(txt);
+    }
+
     public void printProductReport(int id) {
         printProductReport(findProduct(id));
     }
