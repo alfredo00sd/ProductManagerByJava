@@ -1,10 +1,7 @@
 import Store.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.Locale;
-
 import static Store.Rating.*;
 
 public class App {

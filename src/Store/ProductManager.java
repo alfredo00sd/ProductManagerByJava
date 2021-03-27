@@ -111,23 +111,29 @@ public class ProductManager {
         System.out.println(txt);
     }
 
+//    public Map<String, String> getDiscounts() {
+//        return products.keySet().stream().collect(Collectors.groupingBy(p -> p.getRating().getStarts(),
+//                        Collectors.collectingAndThen(Collectors.summarizingDouble(p -> p.getDiscount().doubleValue(),
+//                            discount -> formatter.moneyFormat.format(discount)))));
+//    }
+
     //Move declarations related to formatting here
     public static class ResourceFormatter {
         private final ResourceBundle resources;
         private final DateTimeFormatter dateFormatter;
-        private final NumberFormat moneyFormatter;
+        private final NumberFormat moneyFormat;
 
         private ResourceFormatter(Locale locale) {
 
             resources = ResourceBundle.getBundle("Store.resources", locale);
             dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
-            moneyFormatter = NumberFormat.getCurrencyInstance(locale);
+            moneyFormat = NumberFormat.getCurrencyInstance(locale);
         }
 
         private String formatProduct(Product product) {
             return MessageFormat.format(resources.getString("product"),
                                         product.getName(),
-                                        moneyFormatter.format(product.getPrice()), product.getRating().getStarts(),
+                                        moneyFormat.format(product.getPrice()), product.getRating().getStarts(),
                                         dateFormatter.format(product.getBestBefore()));
         }
 
