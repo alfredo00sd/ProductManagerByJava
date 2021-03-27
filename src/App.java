@@ -18,7 +18,7 @@ public class App {
         pm.reviewProduct(1, THREE_STARTS, "Good enough");
         pm.reviewProduct(1, FIVE_STARTS, "I love it!");
         pm.reviewProduct(1, FOUR_STARTS, "Made me happy");
-//        pm.printProductReport(1);
+//        pm.printProductReport(1   );
 
         pm.changeLocal("ru-RU");
 
@@ -52,8 +52,8 @@ public class App {
         Comparator<Product> priceSorter = (p1, p2) -> p2.getPrice().compareTo(p1.getPrice());
 
 //        pm.printProducts(ratingSorter);
-        pm.printProducts(ratingSorter.thenComparing(priceSorter));//Combine sorters
-        pm.printProducts(ratingSorter.thenComparing(priceSorter).reversed());//Combine sorters reverse
+        pm.printProducts(p -> p.getPrice().floatValue() < 2, ratingSorter.thenComparing(priceSorter));//Combine sorters
+        pm.printProducts(p -> p.getPrice().floatValue() > 2, ratingSorter.thenComparing(priceSorter).reversed());//Combine sorters reverse
     }
 
     public static void order(Product product) {

@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ProductManager {
 
@@ -56,53 +58,35 @@ public class ProductManager {
     //Should return product because we are adding a review to the product...
     public Product reviewProduct(Product product, Rating rating, String comments) {
 
-        int sum = 0;
         //Get the list of reviews of a product
         List<Review> reviews = products.get(product);
         //Recreate the product getting rid of the old one and put the new one...
         products.remove(product, reviews);
-
         reviews.add(new Review(rating, comments));
 
-        for(Review review : reviews) {//Calc total sum of ratings
-
-            sum += review.getRating().ordinal();
-        }
-
-        //Calculate rating based on the Average of reviews.
-        product = product.applyRating(Rateable.convert(Math.round((float) sum / reviews.size())));
+        product = product.applyRating(Rateable.convert((int) Math.round(
+                            reviews.stream().mapToInt(r -> r.getRating().ordinal()).average().orElse(0))));
 
         products.put(product, reviews);
 
         return product;
     }
+
     public Product reviewProduct(int id, Rating rating, String comments) {
         return reviewProduct(findProduct(id), rating, comments);
     }
 
     public Product findProduct(int id) {
-        Product result = null;
-        for (Product product : products.keySet()) {
-            if(product.getId() == id) {
-                result = product;
-                break;
-            }
-        }
-        return result;
+
+        return products.keySet().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
     }
 
     //Print more than one report in a particular order.
-    public void printProducts(Comparator<Product> sorter) {
+    public void printProducts(Predicate<Product> filter, Comparator<Product> sorter) {
 
-        //Get the keys of obj hashMap
-        List<Product> productList = new ArrayList<>(products.keySet());
-        productList.sort(sorter);
         StringBuilder txt = new StringBuilder();
 
-        for (Product product : productList) {
-            txt.append(formatter.formatProduct(product));
-            txt.append("\n");
-        }
+        products.keySet().stream().filter(filter).sorted(sorter).forEach(p -> txt.append(formatter.formatProduct(p)).append("\n"));
         System.out.println(txt);
     }
 
@@ -117,16 +101,12 @@ public class ProductManager {
 
         txt.append("\n");
         Collections.sort(reviews);
-        for(Review review : reviews) {
-
-            txt.append(formatter.formatReview(review));
-
-            txt.append("\n");
-        }
 
         if(reviews.isEmpty()) {
-            txt.append(formatter.getText("no.reviews"));
-            txt.append("\n");
+            txt.append(formatter.getText("no.reviews")).append("\n");
+        }else {
+            //Collector is better for parallel processing
+            txt.append(reviews.stream().map(r -> formatter.formatReview(r) + "\n").collect(Collectors.joining()));
         }
         System.out.println(txt);
     }
@@ -145,16 +125,16 @@ public class ProductManager {
         }
 
         private String formatProduct(Product product) {
-
-            return MessageFormat.format(resources.getString("product"), product.getName(),
+            return MessageFormat.format(resources.getString("product"),
+                                        product.getName(),
                                         moneyFormatter.format(product.getPrice()), product.getRating().getStarts(),
                                         dateFormatter.format(product.getBestBefore()));
         }
 
         private String formatReview(Review review) {
 
-            return MessageFormat.format(resources.getString("review"), review.getRating().getStarts(),
-                                        review.getComments());
+            return MessageFormat.format(resources.getString("review"),
+                                        review.getRating().getStarts(), review.getComments());
         }
 
         private String getText(String key) {
