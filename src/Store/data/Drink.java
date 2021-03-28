@@ -1,8 +1,7 @@
-package Store;
+package Store.data;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 public final class Drink extends Product {

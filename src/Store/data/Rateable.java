@@ -1,4 +1,4 @@
-package Store;
+package Store.data;
 
 @FunctionalInterface//to not accidentally add another abstract method
 public interface Rateable<T> { //<T> make it generic, T could be whatever but T conventionally is Type.

@@ -1,4 +1,4 @@
-package Store;
+package Store.data;
 
 public enum Rating {
     NOT_RATED("\u2606\u2606\u2606\u2606\u2606"),

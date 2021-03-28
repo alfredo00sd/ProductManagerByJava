@@ -1,4 +1,4 @@
-package Store;
+package Store.data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

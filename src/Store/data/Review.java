@@ -1,4 +1,4 @@
-package Store;
+package Store.data;
 
 public class Review implements Comparable<Review> {
     private Rating rating;
